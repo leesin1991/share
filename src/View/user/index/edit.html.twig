@@ -1,0 +1,119 @@
+{% extends 'BikeDashboardBundle::layout.html.twig' %}
+
+{% block content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        编辑用户
+        <small>user-edit</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><i class="fa fa-dashboard"></i> 首页</li>
+        <li>用户管理</li>
+        <li><a href="{{ path('user_list') }}">用户</a></li>
+        <li class="active">编辑</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <div class="box box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title">用户信息</h3>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form role="form" id="edit-user-form">
+<div class="row">
+    <div class="col-md-6 col-sm-12 col-xs-12">
+              <div class="box-body">
+                <div class="callout callout-danger" style="display:none">
+                  <h4>保存失败</h4>
+                  <p></p>
+                </div>
+                <div class="form-group">
+                  <label for="avatar">头像</label>
+                  <img class="profile-user-img img-responsive img-circle" src="{{ user.getAvatar() }}" alt="User profile picture">
+                </div>
+                <div class="form-group">
+                  <label for="name">姓名</label>
+                  <input type="text" class="form-control" value="{{ user.getName() }}" id="name" name="name"  placeholder="" required="required">
+                </div> 
+                <div class="form-group">
+                  <label for="mobile">手机号</label>
+                  <input type="text" class="form-control" value="{{ user.getMobile() }}" id="mobile" name="mobile" placeholder="">
+                </div>
+                <div class="form-group">
+                  <label for="pwd">密码</label>
+                  <input type="password" class="form-control" id="pwd" name="pwd" placeholder="不修改请留白">
+                </div>
+                <div class="form-group">
+                  <label for="repwd">确认密码</label>
+                  <input type="password" class="form-control" id="repwd" name="repwd" placeholder="不修改请留白">
+                </div>
+                <div class="form-group">
+                  <label for="id_no">身份证</label>
+                  <input type="text" class="form-control" value="{{ user.getId_no() }}" id="id_no" name="id_no" placeholder="">
+                </div> 
+                <div class="form-group">
+                  <label for="balance">余额</label>
+                  <input type="text" class="form-control" value="{{ user.getBalance() }}" id="balance" name="balance" placeholder="">
+                </div>
+                <div class="form-group">
+                  <label for="is_certificated">是否认证：</label>
+                  <label>
+                    是<input type="radio" name="is_certificated" class="flat-red" value="1" {% if user.getIs_certificated()==1 %}checked {% endif %}>
+                  </label>
+                  <label>
+                    否<input type="radio" name="is_certificated" class="flat-red" value="0" {% if user.getIs_certificated()==0 %}checked {% endif %}>
+                  </label>           
+                </div>
+                <div class="form-group">
+                  <label for="last_login_ip">最后登录IP</label>
+                  <label class="form-control">{{ user.getLast_login_ip() }} </label>
+                </div>
+                <div class="form-group">
+                  <label for="last_login_time">最后登录时间</label>
+                  <label class="form-control">{{ user.getLast_login_time()|date('Y-m-d H:i:s') }} </label>
+                </div>
+              </div>
+              <!-- /.box-body -->
+    </div>
+</div>
+
+              <div class="box-footer">
+                <button type="submit" class="btn btn-primary">保存</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+{% endblock %}
+
+{% block footer_js %}
+{{ parent() }}
+<script>
+$(function(){
+    var $form = $('#edit-user-form');
+    $form.submit(function(){
+        var url = '{{ path('user_edit',{id: user.getId()}) }}';
+        var data = $form.serializeArray();
+
+        $form.find('button[type="submit"]').prop('disabled', true);
+        $.post(url, data, function(result){
+            if (result.errno == 0) {
+                window.location.href = '{{ path('user_list') }}';
+            } else {
+                $form.find('.callout-danger').show().find('p').html(result.errmsg);
+            }
+            $form.find('button[type="submit"]').prop('disabled', false);
+        });
+        return false;
+    });
+});
+</script>
+{% endblock %}
